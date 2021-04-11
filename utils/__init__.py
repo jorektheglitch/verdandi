@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 from .yapi import YggdrasilAPI
 from .tkinter_extensions import AioTk, Table, tk, ttk
@@ -27,7 +28,7 @@ def init_interface():
     loop = asyncio.get_event_loop()
     ygg = YggdrasilAPI()
 
-    root = AioTk('root')
+    root = AioTk(os.getenv('DISPLAY'))
     root.title('Verdandi')
     root.geometry('800x500')
     notebook = ttk.Notebook(root)
