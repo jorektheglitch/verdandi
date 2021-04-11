@@ -25,13 +25,17 @@ class YggdrasilAPI():
 
     def __init__(self, address='localhost', port=9001, unixsock='/var/run/yggdrasil.sock'):
         self.addr = address, port
+        self.unixsock = unixsock
         self.stats = {}
         self.__init_trackers()
         asyncio.ensure_future(self.getSelf())
 
     async def _send_request(self, method:str, **kwargs)->dict:
         req = {'request': method, **kwargs}
-        reader, writer = await asyncio.open_connection(*self.addr)
+        try:
+            reader, writer = await asyncio.open_connection(*self.addr)
+        except OSError:
+            reader, writer = await asyncio.open_unix_connection(self.unixsock)
         writer.write(json.dumps(req).encode())
         response = json.loads(await reader.read())
         writer.close()
